@@ -1,28 +1,32 @@
-name: Generate Snake
+name: generate anim
 
 on:
+  # har 24 soatda avto-run bo'ladi
   schedule:
-    - cron: "0 */12 * * *" # Har 12 soatda avto-yangilanadi
+    - cron: "0 0 * * *"
+  
+  # qo'lda ishga tushirish tugmasi uchun
   workflow_dispatch:
 
 jobs:
-  build:
+  generate:
+    permissions: 
+      contents: write
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: Platane/snk@v3
+      # github-contribution-grid-snake.svg va github-contribution-grid-snake-dark.svg generatsiya qilish
+      - name: generate github-contribution-grid-snake.svg
+        uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
-
-      - uses: crazy-max/ghaction-import-gpg@v5
-        ignore_missing_pubkey: true
-        continue-on-error: true
-
-      - name: Push Snake SVG
+            
+      # generatsiya bo'lgan faylni output branch'ga push qilish
+      - name: push github-contribution-grid-snake.svg to the output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
           target_branch: output
